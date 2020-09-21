@@ -1,5 +1,6 @@
 var mysql = require("mysql");
 var inquirer = require("inquirer");
+var consoleTable = require("console.table")
 
 // create the connection information for the sql database
 var connection = mysql.createConnection({
