@@ -1,11 +1,11 @@
 {
-    "name": "top5000",
-    "version": "1.0.0",
-    "description": "activity for demonstrating inquirer with mysql",
-    "main": "top5000.js",
-    "dependencies": {
-      "inquirer": "^6.2.1",
-      "mysql": "^2.16.0",
-      "console.table": "^0.10.0"
-    }
+  "name": "top5000",
+  "version": "1.0.0",
+  "description": "activity for demonstrating inquirer with mysql",
+  "main": "top5000.js",
+  "dependencies": {
+    "inquirer": "^6.2.1",
+    "mysql": "^2.16.0",
+    "console.table": "^0.10.0"
   }
+}
