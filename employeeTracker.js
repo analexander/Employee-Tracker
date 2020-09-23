@@ -13,7 +13,7 @@ var connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "Z1ggystardust!",
   database: "employeeTracker_DB"
 });
 
@@ -23,3 +23,45 @@ connection.connect(function(err) {
   // run the start function after the connection is made to prompt the user
   start();
 });
+
+function start() {
+    inquirer
+      .prompt({
+        name: "action",
+        type: "list",
+        message: "What would you like to do?",
+        choices:
+        [
+            "View all Departments",
+            "View all Roles",
+            "View all Employees",
+            "Add Department",
+            "Add Role",
+            "Add Employee",
+            "EXIT"
+        ]
+      })
+      .then(function(answer) {
+        // based on their answer, either call the bid or the post functions
+        if (answer.action === "View all Departments") {
+          viewDepts();
+        }
+        else if(answer.action === "View all Roles") {
+          viewRoles();
+        }
+        else if(answer.action === "View all Employees") {
+          viewEmps();
+        }
+        else if(answer.action === "Add Department") {
+          addDept();
+        }
+        else if(answer.action === "Add Role") {
+          addRole();
+        }
+        else if(answer.action === "Add Employee") {
+          addEmps();
+        } else{
+          connection.end();
+        }
+      });
+  }
