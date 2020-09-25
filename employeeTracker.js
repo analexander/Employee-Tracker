@@ -67,8 +67,9 @@ function start() {
   }
 
 function viewDepts() {
-    connection.query("SELECT * FROM department", function(err, answer) {
+    connection.query("SELECT employee.first_name AS FirstName, employee.last_name AS LastName, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY employee.id;", function(err, answer) {
         if (err) throw err;
+        console.log("\n");
         console.table(answer);
       });
 
@@ -76,8 +77,9 @@ function viewDepts() {
     }
 
 function viewRoles() {
-    connection.query("SELECT * FROM role", function(err, answer) {
+    connection.query("SELECT employee.first_name AS FirstName, employee.last_name AS LastName, role.title AS Role FROM employee JOIN role ON employee.role_id = role.id;", function(err, answer) {
         if (err) throw err;
+        console.log("\n");
         console.table(answer);
         });
     
@@ -85,8 +87,9 @@ function viewRoles() {
     }
 
 function viewEmps() {
-    connection.query("SELECT * FROM employee", function(err, answer) {
+    connection.query("SELECT employee.first_name AS FirstName, employee.last_name AS LastName, role.title AS Role, department.name AS Department, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role ON role.id = employee.role_id INNER JOIN department ON department.id = role.department_id LEFT JOIN employee e on employee.manager_id = e.id;", function(err, answer) {
         if (err) throw err;
+        console.log("\n");
         console.table(answer);
         });
         
@@ -110,7 +113,38 @@ function addDept() {
             },
             function(err) {
             if (err) throw err;
-            console.log("Your department was added successfully!");
+            console.log("The department was added successfully!");
+
+            start();
+            }
+        );
+    });
+}
+
+function addRole() {
+    inquirer
+        .prompt([
+        {
+            name: "roleTitle",
+            type: "input",
+            message: "What is the title of the role?"
+        },
+        {
+            name: "roleSalary",
+            type: "input",
+            message: "What is the salary of the role?"
+        }
+        ])
+        .then(function(answer) {
+        connection.query(
+            "INSERT INTO role SET ?",
+            {
+            title: answer.roleTitle,
+            salary: answer.roleSalary,
+            },
+            function(err) {
+            if (err) throw err;
+            console.log("The role was added successfully!");
 
             start();
             }
