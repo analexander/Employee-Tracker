@@ -13,7 +13,7 @@ var connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "Z1ggystardust!",
+  password: "",
   database: "employeeTracker_DB"
 });
 
@@ -65,3 +65,55 @@ function start() {
         }
       });
   }
+
+function viewDepts() {
+    connection.query("SELECT * FROM department", function(err, answer) {
+        if (err) throw err;
+        console.table(answer);
+      });
+
+      start();
+    }
+
+function viewRoles() {
+    connection.query("SELECT * FROM role", function(err, answer) {
+        if (err) throw err;
+        console.table(answer);
+        });
+    
+        start();
+    }
+
+function viewEmps() {
+    connection.query("SELECT * FROM employee", function(err, answer) {
+        if (err) throw err;
+        console.table(answer);
+        });
+        
+        start();
+     }
+
+function addDept() {
+    inquirer
+        .prompt([
+        {
+            name: "deptName",
+            type: "input",
+            message: "What is the name of the Department?"
+        }
+        ])
+        .then(function(answer) {
+        connection.query(
+            "INSERT INTO department SET ?",
+            {
+            name: answer.deptName
+            },
+            function(err) {
+            if (err) throw err;
+            console.log("Your department was added successfully!");
+
+            start();
+            }
+        );
+    });
+}
