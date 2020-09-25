@@ -71,9 +71,8 @@ function viewDepts() {
         if (err) throw err;
         console.log("\n");
         console.table(answer);
+        start();
       });
-
-      start();
     }
 
 function viewRoles() {
@@ -81,9 +80,8 @@ function viewRoles() {
         if (err) throw err;
         console.log("\n");
         console.table(answer);
-        });
-    
         start();
+        });
     }
 
 function viewEmps() {
@@ -91,9 +89,8 @@ function viewEmps() {
         if (err) throw err;
         console.log("\n");
         console.table(answer);
-        });
-        
         start();
+        });
      }
 
 function addDept() {
@@ -113,8 +110,7 @@ function addDept() {
             },
             function(err) {
             if (err) throw err;
-            console.log("The department was added successfully!");
-
+            console.log("\n The department was added successfully! \n");
             start();
             }
         );
@@ -137,14 +133,14 @@ function addRole() {
         ])
         .then(function(answer) {
         connection.query(
-            "INSERT INTO role SET ?",
+            "SELECT role.title AS Title, role.salary AS Salary FROM role",
             {
             title: answer.roleTitle,
             salary: answer.roleSalary,
             },
             function(err) {
             if (err) throw err;
-            console.log("The role was added successfully!");
+            console.log("\n The role was added successfully! \n");
 
             start();
             }
