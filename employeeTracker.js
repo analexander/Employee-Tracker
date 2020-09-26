@@ -1,3 +1,4 @@
+const Employee = require("./lib/Employee");
 var mysql = require("mysql");
 var inquirer = require("inquirer");
 var consoleTable = require("console.table")
@@ -18,7 +19,7 @@ var connection = mysql.createConnection({
 });
 
 // connect to the mysql server and sql database
-connection.connect(function(err) {
+connection.connect((err) => {
   if (err) throw err;
   // run the start function after the connection is made to prompt the user
   start();
@@ -60,14 +61,15 @@ function start() {
         }
         else if(answer.action === "Add Employee") {
           addEmps();
-        } else{
+        } else if (answer.action === "EXIT") {
           connection.end();
         }
       });
   }
 
 function viewDepts() {
-    connection.query("SELECT employee.first_name AS FirstName, employee.last_name AS LastName, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY employee.id;", function(err, answer) {
+    connection.query("SELECT employee.first_name AS FirstName, employee.last_name AS LastName, department.name AS Department FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id ORDER BY employee.id;",
+    (err, answer) => {
         if (err) throw err;
         console.log("\n");
         console.table(answer);
@@ -76,7 +78,8 @@ function viewDepts() {
     }
 
 function viewRoles() {
-    connection.query("SELECT employee.first_name AS FirstName, employee.last_name AS LastName, role.title AS Role FROM employee JOIN role ON employee.role_id = role.id;", function(err, answer) {
+    connection.query("SELECT employee.first_name AS FirstName, employee.last_name AS LastName, role.title AS Role FROM employee JOIN role ON employee.role_id = role.id;",
+    (err, answer) => {
         if (err) throw err;
         console.log("\n");
         console.table(answer);
@@ -85,7 +88,8 @@ function viewRoles() {
     }
 
 function viewEmps() {
-    connection.query("SELECT employee.first_name AS FirstName, employee.last_name AS LastName, role.title AS Role, department.name AS Department, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role ON role.id = employee.role_id INNER JOIN department ON department.id = role.department_id LEFT JOIN employee e on employee.manager_id = e.id;", function(err, answer) {
+    connection.query("SELECT employee.first_name AS FirstName, employee.last_name AS LastName, role.title AS Role, department.name AS Department, CONCAT(e.first_name, ' ' ,e.last_name) AS Manager FROM employee INNER JOIN role ON role.id = employee.role_id INNER JOIN department ON department.id = role.department_id LEFT JOIN employee e on employee.manager_id = e.id;",
+    (err, answer) => {
         if (err) throw err;
         console.log("\n");
         console.table(answer);
@@ -102,13 +106,13 @@ function addDept() {
             message: "What is the name of the Department?"
         }
         ])
-        .then(function(answer) {
+        .then((answer) => {
         connection.query(
             "INSERT INTO department SET ?",
             {
             name: answer.deptName
             },
-            function(err) {
+            (err) => {
             if (err) throw err;
             console.log("\n The department was added successfully! \n");
             start();
@@ -131,19 +135,86 @@ function addRole() {
             message: "What is the salary of the role?"
         }
         ])
-        .then(function(answer) {
+        .then((answers) => {
         connection.query(
             "SELECT role.title AS Title, role.salary AS Salary FROM role",
             {
-            title: answer.roleTitle,
-            salary: answer.roleSalary,
+            title: answers.roleTitle,
+            salary: answers.roleSalary,
             },
-            function(err) {
+            (err) => {
             if (err) throw err;
             console.log("\n The role was added successfully! \n");
 
             start();
             }
         );
+    });
+}
+
+currentRoles = [];
+currentManagers = [];
+
+function empRole() {
+    connection.query("SELECT * FROM role",
+    (err, answer) => {
+        if (err) throw err;
+        for (var i = 0; i < answer.length; i++) {
+            currentRoles.push(answer[i].title);
+          }
+    })
+    return currentRoles;
+}
+
+function empManager() {
+    connection.query("SELECT first_name, last_name FROM employee WHERE manager_id IS NULL",
+    (err, answer) => {
+        if (err) throw err;
+        for (var i = 0; i < answer.length; i++) {
+            currentManagers.push(`${answer[i].first_name} ${answer[i].last_name}`);
+          }
+    })
+    return currentManagers;
+}
+
+function addEmps() {
+    inquirer.prompt([
+    {
+        type: "string",
+        name: "firstName",
+        message: "What is this employee's first name?",
+    },
+    {
+        type: "string",
+        name: "lastName",
+        message: "What is this employee's last name?",
+    },
+    {
+        type: "rawlist",
+        name: "role",
+        message: "What is this employee's role?",
+        choices: empRole()
+    },
+    {
+        type: "rawlist",
+        name: "manager",
+        message: "Who is this employee's manager?",
+        choices: empManager()
+    }
+
+    ]).then((answers) => {
+        const roleID = empRole().indexOf(answers.role) + 1
+        const managerID = empManager().indexOf(answers.manager) + 1
+        connection.query("INSERT INTO employee SET ?", 
+      {
+          first_name: answers.firstName,
+          last_name: answers.lastName,
+          manager_id: managerID,
+          role_id: roleID
+      }, (err) => {
+        if (err) throw err;
+        console.table(answers)
+        start();
+      })
     });
 }
