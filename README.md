@@ -4,7 +4,7 @@
 
 ## Description
 
-This is an employee management system command line application. This application will allow the user to view current employees, roles, departments, add employees, roles, departments, and update employee roles using the Node, mySQL, and Inquirer. The information inputted will reflect back on the database.
+This is an employee management system command line application. This application will allow the user to view current employees, roles, departments, add employees, roles, departments, and update employee roles using the Node, mySQL, and Inquirer. The information inserted will reflect back on the database.
 
 ## Table of Contents
 
@@ -15,8 +15,6 @@ This is an employee management system command line application. This application
 * [License](#License)
 
 * [Contributing](#Contributing)
-
-* [Tests](#Tests)
 
 * [Questions](#Questions)
 
@@ -33,6 +31,10 @@ To run the application, input the following command:
 ````
 node employeeTracker.js
 ````
+
+Upon pressing enter, the user will be prompted with a series of questions about their employee management system and will interact with the SQL database.
+
+![Employee Tracker](assets/walkthrough.gif)
 
 ## License
 
