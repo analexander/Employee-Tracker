@@ -13,7 +13,7 @@ var connection = mysql.createConnection({
   user: "root",
 
   // Your password
-  password: "",
+  password: "Z1ggystardust!",
   database: "employeeTracker_DB"
 });
 
@@ -102,6 +102,9 @@ function viewEmps() {
      }
 
 function addDept() {
+  connection.query(
+    "SELECT department.name FROM department", (err, data) => {
+      if (err) throw err;
     inquirer
         .prompt([
         {
@@ -123,9 +126,13 @@ function addDept() {
             }
         );
     });
+})
 }
 
 function addRole() {
+  connection.query(
+    "SELECT role.title AS Title, role.salary AS Salary FROM role", (err, data) => {
+      if (err) throw err;
     inquirer
         .prompt([
         {
@@ -141,7 +148,7 @@ function addRole() {
         ])
         .then((answers) => {
         connection.query(
-            "SELECT role.title AS Title, role.salary AS Salary FROM role",
+            "INSERT INTO role SET ?",
             {
             title: answers.roleTitle,
             salary: answers.roleSalary,
@@ -154,6 +161,7 @@ function addRole() {
             }
         );
     });
+})
 }
 
 currentRoles = [];
